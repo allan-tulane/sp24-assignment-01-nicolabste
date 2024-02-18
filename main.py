@@ -5,13 +5,24 @@ See assignment-01.pdf for details.
 # no imports needed.
 
 def foo(x):
-    ### TODO
-    pass
-
+    if x <= 1:
+      return x
+    else:
+      ra = foo(x - 1)
+      rb = foo(x - 2)
+      return ra + rb
+      
 def longest_run(mylist, key):
-    ### TODO
-    pass
+    current_count = 0
 
+    for num in mylist:
+        if num == key:
+            current_count += 1
+            max_count = max(max_count, current_count)
+        else:
+            current_count = 0
+
+    return max_count
 
 class Result:
     """ done """
@@ -37,8 +48,28 @@ def to_value(v):
         return int(v)
         
 def longest_run_recursive(mylist, key):
-    ### TODO
-    pass
+    def helper(start, end):
+        if start == end:
+            return Result(0, 0, 0, mylist[start] == key)
+
+        mid = (start + end) // 2
+        left_result = helper(start, mid)
+        right_result = helper(mid + 1, end)
+
+        left_size = left_result.left_size
+        right_size = right_result.right_size
+
+        if mylist[mid] == key:
+            left_size += left_result.right_size
+            right_size += right_result.left_size
+
+        longest_size = max(left_result.longest_size, right_result.longest_size, left_size, right_size)
+        is_entire_range = left_result.is_entire_range and right_result.is_entire_range and \
+                          left_result.right_size + right_result.left_size >= longest_size
+
+        return Result(left_size, right_size, longest_size, is_entire_range)
+
+    return helper(0, len(mylist) - 1).longest_size
 
 
 
